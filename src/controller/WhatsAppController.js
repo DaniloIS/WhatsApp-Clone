@@ -206,6 +206,49 @@ class WhatsAppController {
             this.el.modalContacts.hide();
         });
 
+        this.el.btnSendMicrophone.on('click', e => {
+            this.el.recordMicrophone.show();
+            this.el.btnSendMicrophone.hide();
+            this.startRecordMicrophoneTime();
+        });
+
+        this.el.btnCancelMicrophone.on('click', e => {
+            this.closeRecordMicrophone();
+        });
+
+        this.el.btnFinishMicrophone.on('click', e => {
+            this.closeRecordMicrophone();
+        });
+
+        this.el.inputText.on('Keyup', e => {
+
+            if(this.el.inputText.innerHTML.length) {
+                this.el.inputPlaceholder.hide();
+                this.el.btnSendMicrophone.hide();
+            } else {
+                this.el.inputPlaceholder.show();
+            }
+
+        });
+
+    }
+
+    startRecordMicrophoneTime() {
+    
+        let start = Date.now();
+
+        this._recordMicrophoneInterval = setInterval(() => {
+
+            this.el.recordMicrophoneTimer.innerHTML = Format.toTime(Date.now() - start);
+
+        }, 100);
+
+    }
+
+    closeRecordMicrophone() {
+        this.el.recordMicrophone.hide();
+        this.el.btnSendMicrophone.show();
+        clearInterval(this._recordMicrophoneInterval);
     }
 
     closeAllMainPanel() {
