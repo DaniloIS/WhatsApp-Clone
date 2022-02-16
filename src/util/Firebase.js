@@ -1,7 +1,7 @@
-import { initializeApp } from 'firebase/app';
+/*import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
 import { getStorage } from "firebase/storage";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";*/
 
 
 
@@ -30,15 +30,16 @@ export class Firebase {
     init() {
 
         if(!window._initializedFirebase) {
-            const app = initializeApp(this._config);
+            /*const app = initializeApp(this._config);
             this._db = getFirestore(app);
             this._storage = getStorage(app);
-
             
-            /*firebase.firestore().settings({
+            */
+            firebase.initializeApp(this._config);
+            firebase.firestore().settings({
                 timestampsInSnapshots: true
-            });*/
-
+            });
+            
             window._initializedFirebase = true;
         }
 
@@ -46,18 +47,29 @@ export class Firebase {
 
     static db() {
         //return getDocs(collection(this._db, value));
-        return this._db;
+        return firebase.firestore();
     }
 
     static hd() {
-        return this._storage;
+        return firebase.storage();
     }
 
     initAuth() {
 
         return new Promise((s, f) => {
 
-            const provider = new GoogleAuthProvider();
+            let provider = new firebase.auth.GoogleAuthProvider();
+            console.log(provider)
+            firebase.auth().signInWithPopup(provider)
+            .then(result => {
+                let token = result.credential.accessToken;
+                let user = result.user;
+                
+                s({user, token})
+            }).catch(err => {
+                f(err);
+            })
+            /*const provider = new GoogleAuthProvider();
             
             const auth = getAuth();
             signInWithPopup(auth, provider)
@@ -79,7 +91,7 @@ export class Firebase {
                 const credential = GoogleAuthProvider.credentialFromError(error);
                 // ...
                 f(error);
-            });
+            });*/
         });
 
     }

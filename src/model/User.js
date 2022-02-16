@@ -1,10 +1,9 @@
+import { Firebase } from '../util/Firebase';
 import { ClassEvent } from '../util/ClassEvent';
-import { Firebase } from './../util/Firebase';
-import { doc, setDoc } from 'firebase/firestore';
 
 export class User extends ClassEvent {
 
-    constructor(id) {
+    /*constructor(id) {
 
         super();
 
@@ -22,17 +21,17 @@ export class User extends ClassEvent {
 
         });
 
-    }
+    }*/
 
     static getRef() {
 
-        //return Firebase.db('/users');
+        return Firebase.db().collection('/users');
 
     }
 
-    static findByEmail(email, user) {
+    static findByEmail(email) {
 
-        //return setDoc(doc(Firebase.db(), 'users', email), user);
+        return User.getRef().doc(email);
 
     }
     
