@@ -21,7 +21,7 @@ export class WhatsAppController {
 
     initAuth() {
         this._firebase.initAuth().then(response => {
-            console.log(response);
+            /*console.log(response);
 
             this._user = new User();
 
@@ -37,12 +37,16 @@ export class WhatsAppController {
                     display: 'flex'
                 });
 
-            });
-            /*this._user = new User(response.user.email);
+            });*/
 
+            
+            this._user = new User(response.user.email);
+            
             this._user.on('datachange', data => {
-
+                console.log(data)
                 document.querySelector('title').innerHTML = data.name + ' - WhatsApp Clone';
+
+                this.el.inputNamePanelEditProfile = data.name;
 
                 if(data.photo) {
 
@@ -57,9 +61,20 @@ export class WhatsAppController {
                     
                 }
 
-            });*/
+            });
 
-            
+            this._user.name = response.user.displayName;
+            this._user.email = response.user.email;
+            this._user.photo = response.user.photoURL;
+
+            this._user.save().then(() => {
+
+                
+
+            });
+            this.el.appContent.css({
+                display: 'flex'
+            });
 
             /*setDoc(doc(this._firebase.db(), 'users', response.user.email), {
                 name: response.user.displayName,
@@ -192,13 +207,37 @@ export class WhatsAppController {
         });
 
         this.el.btnSavePanelEditProfile.on('click', e => {
-            console.log(this.el.inputNamePanelEditProfile.innerHTML)
+            this._user.name = this.el.inputNamePanelEditProfile.innerHTML;
+
+            this._user.save().then(() => {
+                this.el.btnSavePanelEditProfile.disabled = false;
+            });
         });
 
         this.el.formPanelAddContact.on('submit', e => {
             e.preventDefault();
 
             let formData = new FormData(this.el.formPanelAddContact);
+
+            let contact = new User(formData.get(email));
+
+            contact.on('datachange', data => {
+
+                if(data.name) {
+
+                    this._user.addContact(contact).then(() => {
+                        this.el.btnClosePanelAddContact.click();
+                        console.info('Contato foi adicionado!')
+                    });
+
+                } else {
+
+                    console.error('Usuário não foi encontado.')
+
+                }
+
+            });
+            
         });
 
         this.el.contactsMessagesList.querySelectorAll('.contact-item').forEach(item => {

@@ -9,8 +9,6 @@ export class Firebase {
 
     constructor() {
 
-        this._db;
-        this._storage;
         this._config = {
 
             apiKey: "AIzaSyABF0oUat_c9arNJ9WSfcQj1JGuCACTGuA",
@@ -30,11 +28,7 @@ export class Firebase {
     init() {
 
         if(!window._initializedFirebase) {
-            /*const app = initializeApp(this._config);
-            this._db = getFirestore(app);
-            this._storage = getStorage(app);
             
-            */
             firebase.initializeApp(this._config);
             firebase.firestore().settings({
                 timestampsInSnapshots: true
@@ -46,7 +40,6 @@ export class Firebase {
     }
 
     static db() {
-        //return getDocs(collection(this._db, value));
         return firebase.firestore();
     }
 
@@ -59,13 +52,13 @@ export class Firebase {
         return new Promise((s, f) => {
 
             let provider = new firebase.auth.GoogleAuthProvider();
-            console.log(provider)
+            
             firebase.auth().signInWithPopup(provider)
             .then(result => {
                 let token = result.credential.accessToken;
                 let user = result.user;
                 
-                s({user, token})
+                s({user, token});
             }).catch(err => {
                 f(err);
             })
