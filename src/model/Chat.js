@@ -13,7 +13,7 @@ export class Chat extends Model {
         return this._data.users;
     }
 
-    get users(value) {
+    set users(value) {
         return this._data.users = value;
     }
 
@@ -21,7 +21,7 @@ export class Chat extends Model {
         return this._data.timeStamp;
     }
 
-    get timeStamp(value) {
+    set timeStamp(value) {
         return this._data.timeStamp = value;
     }
 
@@ -31,9 +31,43 @@ export class Chat extends Model {
 
     }
 
+    static create(meEmail, contactEmail) {
+
+        let users = {};
+
+        users[btoa(meEmail)] = true;
+        users[btoa(contactEmail)] = true;
+
+        return new Promise((s, f) => {
+
+            Chat.getRef().add({
+                users,
+                timeStamp: new Date()
+            }).then(doc => {
+
+                Chat.getRef().doc(doc.id).get().then(chat => {
+
+                    s(chat);
+
+                }).catch(err => {
+
+                    f(err);
+
+                });
+
+            }).catch(err => {
+
+                f(err);
+                    
+            });
+
+        });
+
+    }
+
     static find(meEmail, contactEmail) {
 
-        Chat.getRef()
+        return Chat.getRef()
             .where(btoa(meEmail), '==', true)
             .where(btoa(contactEmail), '==', true)
             .get();
