@@ -79,6 +79,8 @@ export class MicrophoneController extends ClassEvent{
                             lastModified: Date.now()
                         });
 
+                        this.trigger('recorded', file, decode);
+
                     });
                     
                 }
